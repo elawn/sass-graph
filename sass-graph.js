@@ -42,6 +42,7 @@ function resolveSassPath(sassPath, loadPaths, extensions) {
 function Graph(options, dir) {
   this.dir = dir;
   this.extensions = options.extensions || [];
+  this.ignored = options.ignored || ['node_modules'];
   this.index = {};
   this.follow = options.follow || false;
   this.loadPaths = _(options.loadPaths).map(function(p) {
@@ -50,7 +51,7 @@ function Graph(options, dir) {
 
   if (dir) {
     var graph = this;
-    _.each(glob.sync(dir+'/**/*.@('+this.extensions.join('|')+')', { dot: true, nodir: true, follow: this.follow }), function(file) {
+    _.each(glob.sync(dir+'/!(' + this.ignored.join('|') + ')/**/*.@('+this.extensions.join('|')+')', { dot: true, nodir: true, follow: this.follow }), function(file) {
       graph.addFile(path.resolve(file));
     });
   }
